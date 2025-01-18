@@ -6,19 +6,19 @@ A functional clone of WhatsApp built using Firebase for real-time database and a
 ---
 
 ## Features
--Real-time chat using Firebase Realtime Database
--User authentication:
--Email and Password
--Google Sign-In
--Facebook Login
--User profile setup
--Responsive UI similar to WhatsApp
--Firebase integration for secure and scalable backend
+- Real-time chat using Firebase Realtime Database
+- User authentication:
+- Email and Password
+- Google Sign-In
+- Facebook Login
+- User profile setup
+- Responsive UI similar to WhatsApp
+- Firebase integration for secure and scalable backend
 
 ---
 # Tech Stack
 
--**Frontend:** Android (Java/Kotlin)
--**Backend:** Firebase Realtime Database
--**Authentication:** Firebase Authentication (Email/Password, Google, Facebook)
--**Design:** XML layouts following Material Design principles
+- **Frontend:** Android (Java/Kotlin)
+- **Backend:** Firebase Realtime Database
+- **Authentication:** Firebase Authentication (Email/Password, Google, Facebook)
+- **Design:** XML layouts following Material Design principles

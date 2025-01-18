@@ -2,7 +2,6 @@
 
 A functional clone of WhatsApp built using Firebase for real-time database and authentication. This project demonstrates modern app development practices, integrating Firebase for backend functionality, and offering multiple authentication methods.
 
----
 
 ## Features
 - Real-time chat using Firebase Realtime Database
@@ -14,7 +13,7 @@ A functional clone of WhatsApp built using Firebase for real-time database and a
 - Responsive UI similar to WhatsApp
 - Firebase integration for secure and scalable backend
 
----
+
 # Tech Stack
 
 - **Frontend:** Android (Java/Kotlin)

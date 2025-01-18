@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "651288901846",
+    "firebase_url": "https://whatsappclone-33a5f-default-rtdb.firebaseio.com",
     "project_id": "whatsappclone-33a5f",
     "storage_bucket": "whatsappclone-33a5f.firebasestorage.app"
   },
@@ -12,7 +13,20 @@
           "package_name": "com.srujal.whatsappclone"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "651288901846-m6m9tjemef2osth5mrsqin1brektv5qu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.srujal.whatsappclone",
+            "certificate_hash": "db1865dcbdeac899c5477e8f5b25bc153366ce91"
+          }
+        },
+        {
+          "client_id": "651288901846-87otjcrgsu9sit0a55com2epb36ic0d7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDxuFnJ7PstQ1R9L73bgKtekvS0QjWYpa0"
@@ -20,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "651288901846-87otjcrgsu9sit0a55com2epb36ic0d7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -11,11 +11,17 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -30,6 +36,8 @@ public class SignInActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private ProgressDialog dialog;
     ActivitySignInBinding binding;
+    GoogleSignInOptions googleSignInOptions;
+    GoogleSignInClient googleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +48,9 @@ public class SignInActivity extends AppCompatActivity {
 
         // Initialize Firebase instances
         auth = FirebaseAuth.getInstance();
+
+        googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        googleSignInClient = GoogleSignIn.getClient(SignInActivity.this, googleSignInOptions);
 
         // Initialize ProgressDialog
         dialog = new ProgressDialog(SignInActivity.this);
@@ -56,6 +67,13 @@ public class SignInActivity extends AppCompatActivity {
                 binding.eyeCheck.setImageResource(R.drawable.disable_eye); // Set the eye icon to 'open'
                 binding.etPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
                 isPasswordVisible = true; // Update the state
+            }
+        });
+
+        binding.btnGoogle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signIn();
             }
         });
 
@@ -94,6 +112,8 @@ public class SignInActivity extends AppCompatActivity {
                 // Signing with existing details of users
                 auth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
+
+
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         // Hide progress dialog
@@ -120,6 +140,28 @@ public class SignInActivity extends AppCompatActivity {
         }
 
     }
+
+    private void signIn() {
+        Intent intent = googleSignInClient.getSignInIntent();
+        startActivityForResult(intent, 100);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 100) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                task.getResult(ApiException.class);
+                Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+                startActivity(intent);
+            } catch (ApiException e) {
+                Toast.makeText(this, "Something Went Wrong...", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     // Method to validate password strength
     private boolean isPasswordValid(String password) {
         String passwordPattern = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,}$";

@@ -10,8 +10,14 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -27,6 +33,8 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseDatabase database;
     private ProgressDialog dialog;
+    GoogleSignInOptions googleSignInOptions;
+    GoogleSignInClient googleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +47,9 @@ public class LoginActivity extends AppCompatActivity {
         // Initialize Firebase instances
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
+
+        googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        googleSignInClient = GoogleSignIn.getClient(LoginActivity.this, googleSignInOptions);
 
         // Initialize ProgressDialog
         dialog = new ProgressDialog(LoginActivity.this);
@@ -55,6 +66,14 @@ public class LoginActivity extends AppCompatActivity {
                 binding.eyeCheck.setImageResource(R.drawable.disable_eye); // Set the eye icon to 'open'
                 binding.etPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
                 isPasswordVisible = true; // Update the state
+            }
+        });
+
+        //Sign in with Google
+        binding.btnGoogle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signIn();
             }
         });
 
@@ -133,6 +152,26 @@ public class LoginActivity extends AppCompatActivity {
         if (auth.getCurrentUser()!= null){
             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
             startActivity(intent);
+        }
+    }
+    private void signIn() {
+        Intent intent = googleSignInClient.getSignInIntent();
+        startActivityForResult(intent, 100);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 100) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                task.getResult(ApiException.class);
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                startActivity(intent);
+            } catch (ApiException e) {
+                Toast.makeText(this, "Something Went Wrong...", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

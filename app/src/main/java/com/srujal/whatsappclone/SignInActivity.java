@@ -182,7 +182,6 @@ public class SignInActivity extends AppCompatActivity {
 
                     database.getReference().child("Users").child(user.getUid()).setValue(users);
 
-
                     Toast.makeText(SignInActivity.this, "Sign In with google", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
                     startActivity(intent);

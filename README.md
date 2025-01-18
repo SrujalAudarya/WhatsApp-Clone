@@ -1,5 +1,4 @@
 # WhatsApp Clone
----
 
 A functional clone of WhatsApp built using Firebase for real-time database and authentication. This project demonstrates modern app development practices, integrating Firebase for backend functionality, and offering multiple authentication methods.
 

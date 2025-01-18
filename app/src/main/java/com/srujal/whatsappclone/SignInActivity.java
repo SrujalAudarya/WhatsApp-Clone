@@ -9,13 +9,9 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -24,9 +20,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
+import com.srujal.whatsappclone.Models.Users;
 import com.srujal.whatsappclone.databinding.ActivitySignInBinding;
 
 public class SignInActivity extends AppCompatActivity {
@@ -34,6 +35,7 @@ public class SignInActivity extends AppCompatActivity {
     private boolean isPasswordVisible = false;
 
     private FirebaseAuth auth;
+    private FirebaseDatabase database;
     private ProgressDialog dialog;
     ActivitySignInBinding binding;
     GoogleSignInOptions googleSignInOptions;
@@ -49,7 +51,12 @@ public class SignInActivity extends AppCompatActivity {
         // Initialize Firebase instances
         auth = FirebaseAuth.getInstance();
 
-        googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        database = FirebaseDatabase.getInstance();
+
+        googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
         googleSignInClient = GoogleSignIn.getClient(SignInActivity.this, googleSignInOptions);
 
         // Initialize ProgressDialog
@@ -112,8 +119,6 @@ public class SignInActivity extends AppCompatActivity {
                 // Signing with existing details of users
                 auth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
-
-
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         // Hide progress dialog
@@ -153,13 +158,41 @@ public class SignInActivity extends AppCompatActivity {
         if (requestCode == 100) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
-                task.getResult(ApiException.class);
-                Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
-                startActivity(intent);
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
                 Toast.makeText(this, "Something Went Wrong...", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+    private void firebaseAuthWithGoogle(String idToken){
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken,null);
+        auth.signInWithCredential(credential).
+                addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()){
+                    FirebaseUser user = auth.getCurrentUser();
+
+                    Users users = new Users();
+                    users.setUserId(user.getUid());
+                    users.setEmail(user.getEmail());
+                    users.setUserName(user.getDisplayName());
+                    users.setProfilePic(user.getPhotoUrl().toString());
+
+                    database.getReference().child("Users").child(user.getUid()).setValue(users);
+
+
+                    Toast.makeText(SignInActivity.this, "Sign In with google", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                }
+                else {
+                    Snackbar.make(binding.main, "Authentication Failed...", Snackbar.LENGTH_SHORT).show();
+                //    updateUI(null);
+                }
+            }
+        });
     }
 
     // Method to validate password strength

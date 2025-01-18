@@ -81,7 +81,7 @@ public class HomeActivity extends AppCompatActivity {
                 googleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+                        Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
                         startActivity(intent);
                         finish();
                     }

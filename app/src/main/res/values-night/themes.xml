@@ -1,7 +1,23 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.WhatsAppClone" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <!-- Base dark theme for the app -->
+    <style name="Base.Theme.WhatsAppClone" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <!-- Customize your dark theme here -->
+        <item name="colorPrimary">#00A846</item> <!-- Dark gray background -->
+        <item name="colorOnPrimary">#FFFFFF</item> <!-- Text color on primary -->
+        <item name="colorPrimaryVariant">#1F1F1F</item> <!-- Slightly lighter gray -->
+        <item name="colorPrimaryDark">#000000</item> <!-- Background for darker components -->
+
+        <item name="colorSecondary">#00A846</item> <!-- Accent color (green) -->
+        <item name="colorOnSecondary">#FFFFFF</item> <!-- Text color on accent -->
+        <item name="colorSecondaryVariant">#00B95E</item> <!-- Slightly lighter green -->
+
+        <item name="android:statusBarColor">@color/black</item> <!-- Status bar in dark mode -->
+        <item name="android:navigationBarColor">@color/black</item> <!-- Navigation bar in dark mode -->
+    </style>
+
+    <style name="noActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorPrimaryVariant">#1F1F1F</item>
     </style>
 </resources>

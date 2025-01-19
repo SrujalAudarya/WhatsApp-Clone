@@ -22,6 +22,8 @@
         app:itemIconTint="@color/black"
         app:itemTextColor="@color/black"
         android:background="#00A846"
+        app:itemHorizontalTranslationEnabled="true"
+        app:itemTextAppearanceActiveBoldEnabled="true"
         app:menu="@menu/bottommenu"
         android:layout_weight="8" />
 

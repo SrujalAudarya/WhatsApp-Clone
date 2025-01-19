@@ -137,6 +137,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.chat) {
             getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment, chatsFragment).commit();
+            setTitle("WhatsApp");
         }
         if (item.getItemId() == R.id.status) {
             getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment, statusFragment).commit();

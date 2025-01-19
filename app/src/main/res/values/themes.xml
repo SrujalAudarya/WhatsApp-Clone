@@ -1,15 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.WhatsAppClone" parent="Theme.AppCompat.DayNight.DarkActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="colorPrimary">#00A846</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorPrimaryVariant">#0B5700</item>
+        <!-- Customize your light theme here -->
+        <item name="colorPrimary">#00A846</item> <!-- Green -->
+        <item name="colorOnPrimary">#5D5D5D</item> <!-- Gray text -->
+        <item name="colorPrimaryVariant">#0B5700</item> <!-- Darker green -->
         <item name="colorPrimaryDark">@color/colorPrimary</item>
 
-        <item name="colorSecondary">@color/colorPrimary</item>
-        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondary">@color/colorPrimary</item> <!-- Accent color -->
+        <item name="colorOnSecondary">@color/black</item> <!-- Text color on accent -->
         <item name="colorSecondaryVariant">@color/colorPrimaryVariant</item>
         <item name="colorSecondaryFixed">@color/colorPrimary</item>
 
@@ -20,6 +18,4 @@
         <item name="windowNoTitle">true</item>
         <item name="colorPrimaryVariant">#0B5700</item>
     </style>
-
-
 </resources>

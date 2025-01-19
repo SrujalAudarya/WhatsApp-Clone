@@ -3,4 +3,12 @@
     <string name="whatsapp">WHATSAPP</string>
     <string name="settings">Settings</string>
     <string name="logout">Logout</string>
+
+
+    <string name="facebook_app_id">472012055947629</string>
+    <string name="fb_login_protocol_scheme">fb472012055947629</string>
+    <string name="facebook_client_token">99d3d0bbf9f3b4e58cd71e5a75320652</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

@@ -16,17 +16,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.srujal.whatsappclone.databinding.ActivityHomeBinding;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     ActivityHomeBinding binding;
+    BottomNavigationView bottom_nav;
     GoogleSignInOptions googleSignInOptions;
     GoogleSignInClient googleSignInClient;
     private FirebaseAuth auth;
@@ -42,6 +45,10 @@ public class HomeActivity extends AppCompatActivity {
 
         googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         googleSignInClient = GoogleSignIn.getClient(HomeActivity.this, googleSignInOptions);
+
+        bottom_nav = findViewById(R.id.home_nav);
+        bottom_nav.setOnNavigationItemSelectedListener(HomeActivity.this);
+        bottom_nav.setSelectedItemId(R.id.chat);
     }
 
     @Override
@@ -87,10 +94,16 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 });
                 auth.signOut();
+                LoginManager.getInstance().logOut();
                         Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
                         startActivity(intent);
                         finish();
             }
         }).create().show();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        return false;
     }
 }

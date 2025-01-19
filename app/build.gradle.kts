@@ -50,9 +50,11 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-    implementation("com.google.android.gms:play-services-auth:21.2.0")
+    implementation(libs.play.services.auth)
 
-    implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
+    implementation(platform(libs.firebase.bom))
 
-    implementation("com.google.firebase:firebase-analytics")
+    implementation(libs.firebase.analytics)
+    implementation(libs.facebook.login)
+
 }

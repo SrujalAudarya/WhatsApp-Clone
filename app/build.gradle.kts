@@ -56,5 +56,9 @@ dependencies {
 
     implementation(libs.firebase.analytics)
     implementation(libs.facebook.login)
+    // for circle imageview
+    implementation(libs.circleimageview)
+
+    implementation(libs.picasso)
 
 }

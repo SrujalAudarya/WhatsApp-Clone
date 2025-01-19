@@ -25,6 +25,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.srujal.whatsappclone.Fragments.CallsFragment;
 import com.srujal.whatsappclone.Fragments.ChatsFragment;
 import com.srujal.whatsappclone.Fragments.StatusFragment;
@@ -38,6 +43,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     GoogleSignInOptions googleSignInOptions;
     GoogleSignInClient googleSignInClient;
     private FirebaseAuth auth;
+    private FirebaseDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +53,10 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
         // Initialize FirebaseAuth
         auth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("Message");
+        myRef.setValue("Hello World");
+
 
         googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         googleSignInClient = GoogleSignIn.getClient(HomeActivity.this, googleSignInOptions);
@@ -54,6 +64,19 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         bottom_nav = findViewById(R.id.home_nav);
         bottom_nav.setOnNavigationItemSelectedListener(HomeActivity.this);
         bottom_nav.setSelectedItemId(R.id.chat);
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String value = snapshot.getValue(String.class);
+                Toast.makeText(HomeActivity.this, ""+value, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     @Override

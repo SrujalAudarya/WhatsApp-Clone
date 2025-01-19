@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item android:title="@string/camera"
+        android:id="@+id/camera"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/camera"/>
 
     <item android:id="@+id/setting"
         android:icon="@drawable/settings"
-        android:title="@string/settings"
-        android:showAsAction="always"/>
+        app:showAsAction="never"
+        android:title="@string/settings" />
 
     <item android:id="@+id/logout"
         android:icon="@drawable/logout"
-        android:showAsAction="always"
+        app:showAsAction="never"
         android:title="@string/logout"/>
 
 </menu>

@@ -13,16 +13,16 @@
         android:id="@+id/home_fragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="90" />
+        android:layout_weight="92" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/home_nav"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:itemIconTint="#57130E"
-        app:itemTextColor="#57130E"
-        android:background="@color/colorPrimaryVariant"
+        app:itemIconTint="@color/black"
+        app:itemTextColor="@color/black"
+        android:background="#00A846"
         app:menu="@menu/bottommenu"
-        android:layout_weight="10" />
+        android:layout_weight="8" />
 
 </LinearLayout>

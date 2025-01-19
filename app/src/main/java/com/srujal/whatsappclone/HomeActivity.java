@@ -3,6 +3,7 @@ package com.srujal.whatsappclone;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,12 +25,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.srujal.whatsappclone.Fragments.CallsFragment;
+import com.srujal.whatsappclone.Fragments.ChatsFragment;
+import com.srujal.whatsappclone.Fragments.StatusFragment;
 import com.srujal.whatsappclone.databinding.ActivityHomeBinding;
 
 public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     ActivityHomeBinding binding;
     BottomNavigationView bottom_nav;
+    boolean doubletab = false;
     GoogleSignInOptions googleSignInOptions;
     GoogleSignInClient googleSignInClient;
     private FirebaseAuth auth;
@@ -102,8 +107,39 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         }).create().show();
     }
 
+    ChatsFragment chatsFragment = new ChatsFragment();
+    StatusFragment statusFragment = new StatusFragment();
+    CallsFragment callsFragment = new CallsFragment();
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        return false;
+        if (item.getItemId() == R.id.chat) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment, chatsFragment).commit();
+        }
+        if (item.getItemId() == R.id.status) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment, statusFragment).commit();
+            setTitle("Status");
+        }
+        if (item.getItemId() == R.id.call) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment, callsFragment).commit();
+            setTitle("Calls");
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubletab) {
+            super.onBackPressed();
+        } else {
+            doubletab = true;
+            Toast.makeText(HomeActivity.this, "Press again to exit app", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    doubletab = false;
+                }
+            }, 2000); // 2000 ms delay
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.srujal.whatsappclone.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
+import com.srujal.whatsappclone.ChatDetailsActivity;
 import com.srujal.whatsappclone.Models.Users;
 import com.srujal.whatsappclone.R;
 
@@ -44,7 +46,22 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder>{
 
         // Set the text for each TextView
         holder.username.setText(users.getUserName());
-        holder.lastMsg.setText(users.getLastMessage());
+
+        // Set the last message (static text for now)
+        holder.lastMsg.setText("Last Message");
+
+        //holder.lastMsg.setText(users.getLastMessage());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ChatDetailsActivity.class);
+                intent.putExtra("userid",users.getUserId());
+                intent.putExtra("profileImg",users.getProfilePic());
+                intent.putExtra("userName",users.getUserName());
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override

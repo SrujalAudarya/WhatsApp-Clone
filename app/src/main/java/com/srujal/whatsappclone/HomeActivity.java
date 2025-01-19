@@ -9,13 +9,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -69,7 +65,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String value = snapshot.getValue(String.class);
-                Toast.makeText(HomeActivity.this, ""+value, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(HomeActivity.this, ""+value, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -153,17 +149,14 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public void onBackPressed() {
         if (doubletab) {
+            // This ensures the app is closed completely
+            finishAffinity(); // Closes all activities in the stack
             super.onBackPressed();
         } else {
             doubletab = true;
             Toast.makeText(HomeActivity.this, "Press again to exit app", Toast.LENGTH_SHORT).show();
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    doubletab = false;
-                }
-            }, 2000); // 2000 ms delay
+            new Handler().postDelayed(() -> doubletab = false, 2000); // Reset doubletap after 2 seconds
         }
     }
 }

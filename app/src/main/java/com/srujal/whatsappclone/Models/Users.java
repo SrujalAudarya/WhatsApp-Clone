@@ -50,16 +50,16 @@ public class Users {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getUserId(String key) {
+    public String getUserId() {
         return userId;
     }
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getLastMessage() {

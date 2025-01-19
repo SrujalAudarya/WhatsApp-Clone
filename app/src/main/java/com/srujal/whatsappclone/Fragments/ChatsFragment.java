@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
@@ -47,6 +48,9 @@ public class ChatsFragment extends Fragment {
         binding.chatList.setLayoutManager(linearLayoutManager);
         binding.chatList.setHasFixedSize(true); // Improve performance
         binding.chatList.setItemAnimator(null);
+        // Add DividerItemDecoration
+        binding.chatList.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+
 
         database.getReference().child("Users").addValueEventListener(new ValueEventListener() {
             @Override
@@ -56,8 +60,12 @@ public class ChatsFragment extends Fragment {
                     Users users = dataSnapshot.getValue(Users.class);
                     if (users != null) {
                         users.setUserId(dataSnapshot.getKey());
+
+                        // Fetch status
+//                        String status = dataSnapshot.child("status").getValue(String.class);
+//                        users.setStatus(status != null ? status : "Offline");
+
                         list.add(users);
-                        Log.d("ChatsFragment", "User fetched: " + users.getUserName());
                     }
                 }
                 adapter.notifyDataSetChanged();

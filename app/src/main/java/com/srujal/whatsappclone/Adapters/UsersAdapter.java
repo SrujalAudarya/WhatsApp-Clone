@@ -16,7 +16,10 @@ import com.srujal.whatsappclone.ChatDetailsActivity;
 import com.srujal.whatsappclone.Models.Users;
 import com.srujal.whatsappclone.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder>{
 
@@ -50,7 +53,20 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder>{
         // Set the last message (static text for now)
         holder.lastMsg.setText("Last Message");
 
-        //holder.lastMsg.setText(users.getLastMessage());
+        holder.lastMsg.setText(users.getLastMessage());
+
+        // Show status
+//        if ("Online".equals(users.getStatus())) {
+//            holder.userStatus.setText("Online");
+//        } else {
+//            try {
+//                long lastSeen = Long.parseLong(users.getStatus());
+//                SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a, dd MMM yyyy", Locale.getDefault());
+//                holder.userStatus.setText("Last seen: " + sdf.format(new Date(lastSeen)));
+//            } catch (NumberFormatException e) {
+//                holder.userStatus.setText("Offline");
+//            }
+//        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,13 +87,14 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder>{
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView profileImg;
-        TextView username, lastMsg;
+        TextView username, lastMsg, userStatus;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             profileImg = itemView.findViewById(R.id.profile_image);
             username = itemView.findViewById(R.id.tvUserName);
             lastMsg = itemView.findViewById(R.id.tvLastMsg);
+            userStatus = itemView.findViewById(R.id.tvStatus);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.srujal.whatsappclone.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,10 +17,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.srujal.whatsappclone.Adapters.FragmentsAdapters;
 import com.srujal.whatsappclone.Adapters.UsersAdapter;
+import com.srujal.whatsappclone.GroupChatActivity;
 import com.srujal.whatsappclone.Models.Users;
-import com.srujal.whatsappclone.R;
 import com.srujal.whatsappclone.databinding.FragmentChatsBinding;
 
 import java.util.ArrayList;
@@ -50,6 +50,14 @@ public class ChatsFragment extends Fragment {
         binding.chatList.setItemAnimator(null);
         // Add DividerItemDecoration
         binding.chatList.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+
+        binding.groupChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), GroupChatActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         database.getReference().child("Users").addValueEventListener(new ValueEventListener() {

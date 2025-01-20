@@ -11,6 +11,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.srujal.whatsappclone.ChatDetailsActivity;
 import com.srujal.whatsappclone.Models.Users;
@@ -50,11 +55,32 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder>{
         // Set the text for each TextView
         holder.username.setText(users.getUserName());
 
-        // Set the last message (static text for now)
-        holder.lastMsg.setText("Last Message");
+        FirebaseDatabase.getInstance().getReference().child("Chats")
+                .child(FirebaseAuth.getInstance().getUid() + users.getUserId())
+                .orderByChild("timeStamp")
+                .limitToLast(1)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.hasChildren()){
+                            for (DataSnapshot dataSnapshot: snapshot.getChildren()){
+                                String lastMessage = dataSnapshot.child("message").getValue(String.class);
+                                // Truncate message if it exceeds a certain length
+                                if (lastMessage != null && lastMessage.length() > 50) {
+                                    lastMessage = lastMessage.substring(0, 50) + "..."; // Show ellipsis after 50 characters
+                                }
+                                holder.lastMsg.setText(lastMessage != null ? lastMessage : "No message");
+                            }
+                        } else {
+                            holder.lastMsg.setText("No messages yet");
+                        }
+                    }
 
-        holder.lastMsg.setText(users.getLastMessage());
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
+                    }
+                });
         // Show status
 //        if ("Online".equals(users.getStatus())) {
 //            holder.userStatus.setText("Online");

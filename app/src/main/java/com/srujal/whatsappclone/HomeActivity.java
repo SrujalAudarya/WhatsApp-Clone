@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.srujal.whatsappclone.Fragments.CallsFragment;
 import com.srujal.whatsappclone.Fragments.ChatsFragment;
@@ -47,16 +48,6 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
 
-        // Set user online status
-//        if (auth.getCurrentUser() != null) {
-//            String userId = auth.getUid();
-//            DatabaseReference userStatusRef = database.getReference().child("Users").child(userId).child("status");
-//
-//            // Set user as "Online"
-//            userStatusRef.setValue("Online");
-//            userStatusRef.onDisconnect().setValue(String.valueOf(System.currentTimeMillis())); // Last seen
-//        }
-
         googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         googleSignInClient = GoogleSignIn.getClient(HomeActivity.this, googleSignInOptions);
 
@@ -66,50 +57,30 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//
-//        if (auth.getCurrentUser() != null) {
-//            String userId = auth.getUid();
-//            DatabaseReference userStatusRef = database.getReference().child("Users").child(userId).child("status");
-//
-//            // Set user's last seen
-//            userStatusRef.setValue(String.valueOf(System.currentTimeMillis()));
-//        }
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
-//        if (auth.getCurrentUser() != null) {
-//            String userId = auth.getUid();
-//            DatabaseReference userStatusRef = database.getReference().child("Users").child(userId).child("status");
-//
-//            // Set user as "Online"
-//            userStatusRef.setValue("Online");
-//        }
-//    }
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.home_menu, menu);
-        return super.onCreateOptionsMenu(menu);
+    protected void onPause() {
+        super.onPause();
+
+        if (auth.getCurrentUser() != null) {
+            String userId = auth.getUid();
+            DatabaseReference userStatusRef = database.getReference().child("Users").child(userId).child("status");
+
+            // Set user's last seen
+            userStatusRef.setValue(String.valueOf(System.currentTimeMillis()));
+        }
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
+    protected void onResume() {
+        super.onResume();
 
-        if (id == R.id.setting) {
-            Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.logout) {
-            signOut();
+        if (auth.getCurrentUser() != null) {
+            String userId = auth.getUid();
+            DatabaseReference userStatusRef = database.getReference().child("Users").child(userId).child("status");
+
+            // Set user as "Online"
+            userStatusRef.setValue("Online");
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void signOut() {

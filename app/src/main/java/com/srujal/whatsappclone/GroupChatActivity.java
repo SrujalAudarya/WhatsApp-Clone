@@ -1,5 +1,6 @@
 package com.srujal.whatsappclone;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -39,6 +40,15 @@ public class GroupChatActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
+
+        binding.btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GroupChatActivity.this, HomeActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         // Initialize variables
         database = FirebaseDatabase.getInstance();

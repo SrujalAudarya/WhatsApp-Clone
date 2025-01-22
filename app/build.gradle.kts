@@ -61,4 +61,8 @@ dependencies {
 
     implementation(libs.picasso)
 
+    //emoji keyboard
+    implementation(libs.emoji2)
+    implementation(libs.emoji2.bundled)
+
 }

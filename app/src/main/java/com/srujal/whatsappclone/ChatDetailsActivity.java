@@ -7,6 +7,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.emoji2.bundled.BundledEmojiCompatConfig;
+import androidx.emoji2.text.EmojiCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -53,30 +55,42 @@ public class ChatDetailsActivity extends AppCompatActivity {
         binding.tvUsername.setText(userName);
         Picasso.get().load(profilePic).placeholder(R.drawable.avatar).into(binding.profileImage);
 
-        // Observe receiver's status
-        DatabaseReference userStatusRef = database.getReference().child("Users").child(reciverId).child("status");
-        userStatusRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    String status = snapshot.getValue(String.class);
+        // Initialize EmojiCompat
+        EmojiCompat.Config config = new BundledEmojiCompatConfig(this);
+        EmojiCompat.init(config);
 
-                    if ("Online".equalsIgnoreCase(status)) {
-                        binding.tvUserStatus.setText("Online");
-                    } else {
-                        long lastSeen = Long.parseLong(status);
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault());
-                        String formattedTime = "Last Seen: " + sdf.format(new Date(lastSeen));
-                        binding.tvUserStatus.setText(formattedTime);
-                    }
-                }
-            }
-
+        // Initialize EmojiPopup
+        binding.emojiKeyboard.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Handle potential errors
+            public void onClick(View view) {
+                Toast.makeText(ChatDetailsActivity.this, "work in progress...", Toast.LENGTH_SHORT).show();
             }
         });
+
+//        // Observe receiver's status
+//        DatabaseReference userStatusRef = database.getReference().child("Users").child(reciverId).child("status");
+//        userStatusRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                if (snapshot.exists()) {
+//                    String status = snapshot.getValue(String.class);
+//
+//                    if ("Online".equalsIgnoreCase(status)) {
+//                        binding.tvUserStatus.setText("Online");
+//                    } else {
+//                        long lastSeen = Long.parseLong(status);
+//                        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault());
+//                        String formattedTime = "Last Seen: " + sdf.format(new Date(lastSeen));
+//                        binding.tvUserStatus.setText(formattedTime);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                // Handle potential errors
+//            }
+//        });
 
         binding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,7 +120,11 @@ public class ChatDetailsActivity extends AppCompatActivity {
                         messagesArrayList.clear();
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                             Messages messages = dataSnapshot.getValue(Messages.class);
-                            messagesArrayList.add(messages);
+                            if (messages != null) {
+                                // Process message text for emojis
+                                messages.setMessage((String) EmojiCompat.get().process(messages.getMessage()));
+                                messagesArrayList.add(messages);
+                            }
                         }
                         chatAdapter.notifyDataSetChanged(); // Notify adapter after loading data
                     }
@@ -126,7 +144,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
                     return;  // Do nothing if message is empty
                 }
 
-                final Messages messages = new Messages(senderId, message);
+                final Messages messages = new Messages(senderId, (String) EmojiCompat.get().process(message));
                 messages.setTimeStamp(new Date().getTime());
                 binding.etMessage.setText("");  // Clear input field after sending
 

@@ -57,30 +57,50 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
     }
 
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//
+//        if (auth.getCurrentUser() != null) {
+//            String userId = auth.getUid();
+//            DatabaseReference userStatusRef = database.getReference().child("Users").child(userId).child("status");
+//
+//            // Set user's last seen
+//            userStatusRef.setValue(String.valueOf(System.currentTimeMillis()));
+//        }
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        if (auth.getCurrentUser() != null) {
+//            String userId = auth.getUid();
+//            DatabaseReference userStatusRef = database.getReference().child("Users").child(userId).child("status");
+//
+//            // Set user as "Online"
+//            userStatusRef.setValue("Online");
+//        }
+//    }
+
     @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (auth.getCurrentUser() != null) {
-            String userId = auth.getUid();
-            DatabaseReference userStatusRef = database.getReference().child("Users").child(userId).child("status");
-
-            // Set user's last seen
-            userStatusRef.setValue(String.valueOf(System.currentTimeMillis()));
-        }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.home_menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
 
-        if (auth.getCurrentUser() != null) {
-            String userId = auth.getUid();
-            DatabaseReference userStatusRef = database.getReference().child("Users").child(userId).child("status");
-
-            // Set user as "Online"
-            userStatusRef.setValue("Online");
+        if (id == R.id.setting) {
+            Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.logout) {
+            signOut();
         }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void signOut() {

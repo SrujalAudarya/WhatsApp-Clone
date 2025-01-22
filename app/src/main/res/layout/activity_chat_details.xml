@@ -11,9 +11,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#00A846"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme">
+        android:background="#00A846">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -113,8 +111,9 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1.5"
+            android:padding="10dp"
             android:src="@drawable/sendicon"
-            app:tint="#006231" />
+            android:background="@drawable/sendbtnbg"/>
     </LinearLayout>
 
 </RelativeLayout>

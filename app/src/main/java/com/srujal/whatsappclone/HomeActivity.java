@@ -95,6 +95,8 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         int id = item.getItemId();
 
         if (id == R.id.setting) {
+            Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+            startActivity(intent);
             Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.logout) {
             signOut();

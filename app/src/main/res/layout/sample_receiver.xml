@@ -17,6 +17,7 @@
         android:text="Message"
         android:textColor="@android:color/black"
         android:textSize="18sp"
+        android:paddingStart="10dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/receiverTime"
         tools:ignore="MissingConstraints" />

@@ -1,7 +1,7 @@
 package com.srujal.whatsappclone.Models;
 
 public class GroupChatModel {
-        String uId, message, senderName;
+        String uId, message, senderName, messageId;
         Long timeStamp;
 
         public GroupChatModel(Long timeStamp, String message, String uId, String senderName) {
@@ -17,7 +17,15 @@ public class GroupChatModel {
             this.senderName = senderName;
         }
 
-        public GroupChatModel() {}
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
+
+    public GroupChatModel() {}
 
         public String getuId() {
             return uId;

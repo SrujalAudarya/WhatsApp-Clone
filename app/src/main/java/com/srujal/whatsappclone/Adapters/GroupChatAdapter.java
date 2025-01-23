@@ -1,6 +1,8 @@
 package com.srujal.whatsappclone.Adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.srujal.whatsappclone.Models.GroupChatModel;
 import com.srujal.whatsappclone.R;
 
@@ -56,6 +59,36 @@ public class GroupChatAdapter extends RecyclerView.Adapter {
         GroupChatModel msg = GroupChatModel.get(position);
         String formattedTime = formatTimestamp(msg.getTimeStamp());
 
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                new AlertDialog.Builder(context)
+                        .setTitle("Delete")
+                        .setMessage("Are you sure you want to delete this message?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                String senderRoom = FirebaseAuth.getInstance().getUid(); // Sender's unique ID
+                                String messageKey = msg.getMessageId(); // Ensure GroupChatModel has a messageId field
+
+                                if (messageKey != null) {
+                                    database.getReference().child("GroupChats").child(senderRoom)
+                                            .child(messageKey)
+                                            .setValue(null);
+                                }
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        }).show();
+                return false;
+            }
+        });
+
         if (holder.getClass() == SenderViewHolder.class) {
             SenderViewHolder senderHolder = (SenderViewHolder) holder;
             senderHolder.senderMsg.setText(msg.getMessage());
@@ -67,6 +100,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter {
             receiverHolder.receiverName.setText(msg.getSenderName()); // Display sender name
         }
     }
+
 
     @Override
     public int getItemCount() {

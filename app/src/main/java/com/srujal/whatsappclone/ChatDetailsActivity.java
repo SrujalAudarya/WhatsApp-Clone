@@ -103,7 +103,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
         final ArrayList<Messages> messagesArrayList = new ArrayList<>();
 
-        final ChatAdapter chatAdapter = new ChatAdapter(messagesArrayList, this);
+        final ChatAdapter chatAdapter = new ChatAdapter(messagesArrayList, this, reciverId);
         binding.chatRecyclerView.setAdapter(chatAdapter);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -120,11 +120,8 @@ public class ChatDetailsActivity extends AppCompatActivity {
                         messagesArrayList.clear();
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                             Messages messages = dataSnapshot.getValue(Messages.class);
-                            if (messages != null) {
-                                // Process message text for emojis
-                                messages.setMessage((String) EmojiCompat.get().process(messages.getMessage()));
+                                messages.setMessageId(dataSnapshot.getKey());
                                 messagesArrayList.add(messages);
-                            }
                         }
                         chatAdapter.notifyDataSetChanged(); // Notify adapter after loading data
                     }

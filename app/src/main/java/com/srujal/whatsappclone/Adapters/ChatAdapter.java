@@ -1,6 +1,8 @@
 package com.srujal.whatsappclone.Adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.srujal.whatsappclone.Models.Messages;
 import com.srujal.whatsappclone.R;
 
@@ -21,6 +24,7 @@ public class ChatAdapter extends RecyclerView.Adapter {
 
     ArrayList<Messages> messages;
     Context context;
+    String recId;
 
     int SENDER_VIEW_TYPE = 1;
     int RECEIVER_VIEW_TYPE = 2;
@@ -28,6 +32,12 @@ public class ChatAdapter extends RecyclerView.Adapter {
     public ChatAdapter(ArrayList<Messages> messages, Context context) {
         this.messages = messages;
         this.context = context;
+    }
+
+    public ChatAdapter(ArrayList<Messages> messages, Context context, String recId) {
+        this.messages = messages;
+        this.context = context;
+        this.recId = recId;
     }
 
     @NonNull
@@ -55,6 +65,31 @@ public class ChatAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Messages msg = messages.get(position);
         String formattedTime = formatTimestamp(msg.getTimeStamp());
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                new AlertDialog.Builder(context)
+                        .setTitle("Delete")
+                        .setMessage("Are you want to delete this message")
+                        .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                String senderRoom =  FirebaseAuth.getInstance().getUid() + recId;
+                                database.getReference().child("Chats").child(senderRoom)
+                                        .child(msg.getMessageId())
+                                        .setValue(null);
+                            }
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        }).show();
+                return false;
+            }
+        });
 
         if (holder.getClass() == SenderViewHolder.class) {
             SenderViewHolder senderHolder = (SenderViewHolder) holder;

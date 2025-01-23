@@ -27,6 +27,7 @@
             android:exported="false" />
         <activity
             android:name=".ChatDetailsActivity"
+            android:launchMode="singleTop"
             android:exported="false" />
 
         <meta-data

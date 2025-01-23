@@ -88,7 +88,10 @@ public class GroupChatActivity extends AppCompatActivity {
                 groupChatMessages.clear();
                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                     GroupChatModel msg = snapshot1.getValue(GroupChatModel.class);
-                    groupChatMessages.add(msg);
+                    if (msg != null) {
+                        msg.setMessageId(snapshot1.getKey()); // Set messageId
+                        groupChatMessages.add(msg);
+                    }
                 }
                 adapter.notifyDataSetChanged();
                 binding.chatRecyclerView.scrollToPosition(groupChatMessages.size() - 1); // Auto-scroll
@@ -100,15 +103,22 @@ public class GroupChatActivity extends AppCompatActivity {
             }
         });
 
+
         // Send message on button click
         binding.btnSendMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String message = binding.etMessage.getText().toString().trim();
                 if (!message.isEmpty()) {
+                    String messageKey = database.getReference().child("Group Chat").push().getKey();
+
                     GroupChatModel msg = new GroupChatModel(senderId, message, senderName);
                     msg.setTimeStamp(new Date().getTime());
-                    database.getReference().child("Group Chat").push().setValue(msg);
+                    msg.setMessageId(messageKey);
+
+                    if (messageKey != null) {
+                        database.getReference().child("Group Chat").child(messageKey).setValue(msg);
+                    }
 
                     // Clear input and hide keyboard
                     binding.etMessage.setText("");
@@ -118,6 +128,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     private void hideKeyboard() {

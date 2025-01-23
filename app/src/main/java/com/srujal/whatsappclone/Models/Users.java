@@ -2,9 +2,9 @@ package com.srujal.whatsappclone.Models;
 
 public class Users {
 
-    private String profilePic, email, userName, password, userId, lastMessage, status;
+    private String profilePic, email, userName, password, userId, lastMessage, status, about;
 
-    public Users(String profilePic, String userName, String email, String password, String userId, String lastMessage, String status) {
+    public Users(String profilePic, String userName, String email, String password, String userId, String lastMessage, String status, String about) {
         this.profilePic = profilePic;
         this.userName = userName;
         this.email = email;
@@ -15,6 +15,14 @@ public class Users {
     }
 
     public Users() { }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
+    }
 
     // SignUp Constructor
     public Users(String userName, String email, String password) {

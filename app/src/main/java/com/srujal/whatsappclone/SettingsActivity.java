@@ -1,11 +1,11 @@
 package com.srujal.whatsappclone;
 
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,8 +26,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.HashMap;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -56,16 +55,35 @@ public class SettingsActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
 
-        IMGUR_CLIENT_ID =  getString(R.string.imgur_client_iD);
+        IMGUR_CLIENT_ID = getString(R.string.imgur_client_iD);
 
         getSupportActionBar().hide();
 
+        // Back button action
         binding.btnBack.setOnClickListener(view -> {
             Intent intent = new Intent(SettingsActivity.this, HomeActivity.class);
             startActivity(intent);
             finish();
         });
 
+        // Save button action
+        binding.btnSave.setOnClickListener(view -> {
+            String about = binding.etAbout.getText().toString();
+            String username = binding.etUsername.getText().toString();
+
+            HashMap<String, Object> objectHashMap = new HashMap<>();
+            objectHashMap.put("about", about);
+            objectHashMap.put("userName", username);
+
+            database.getReference().child("Users").child(FirebaseAuth.getInstance().getUid())
+                    .updateChildren(objectHashMap);
+
+            Toast.makeText(SettingsActivity.this, "Data Successfully Changed", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(SettingsActivity.this, HomeActivity.class);
+            startActivity(intent);
+        });
+
+        // Load existing user data
         database.getReference().child("Users").child(FirebaseAuth.getInstance().getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -75,121 +93,119 @@ public class SettingsActivity extends AppCompatActivity {
                                 .placeholder(R.drawable.avatar)
                                 .into(binding.profileImage);
                         binding.etUsername.setText(users.getUserName());
+                        binding.etAbout.setText(users.getAbout());
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
                     }
-    });
+                });
 
-        binding.addImage.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
+        // Add image button action
+        binding.addImage.setOnClickListener(view -> {
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_GET_CONTENT);
             intent.setType("image/*");
             startActivityForResult(intent, IMAGE_PICK_CODE);
-        }
-    });
-}
-
-@Override
-protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == IMAGE_PICK_CODE && resultCode == RESULT_OK && data != null) {
-        selectedImageUri = data.getData();
-        binding.profileImage.setImageURI(selectedImageUri);
-
-        uploadImageToImgur();
-    }
-}
-
-private void uploadImageToImgur() {
-    if (selectedImageUri == null) {
-        Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show();
-        return;
-    }
-
-    try {
-        File imageFile = new File(FileUtils.getPath(this, selectedImageUri));
-        OkHttpClient client = new OkHttpClient();
-
-        RequestBody requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("image", imageFile.getName(),
-                        RequestBody.create(imageFile, MediaType.parse("image/*")))
-                .build();
-
-        Request request = new Request.Builder()
-                .url("https://api.imgur.com/3/image")
-                .addHeader("Authorization", "Client-ID " + IMGUR_CLIENT_ID)
-                .post(requestBody)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                runOnUiThread(() -> {
-                    Toast.makeText(SettingsActivity.this, "Image upload failed", Toast.LENGTH_SHORT).show();
-                });
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String responseBody = response.body().string();
-                    String imageUrl = parseImageUrl(responseBody);
-
-                    runOnUiThread(() -> {
-                        Toast.makeText(SettingsActivity.this, "Image uploaded successfully", Toast.LENGTH_SHORT).show();
-                        updateProfileImage(imageUrl);
-                    });
-                } else {
-                    runOnUiThread(() -> {
-                        Toast.makeText(SettingsActivity.this, "Image upload failed", Toast.LENGTH_SHORT).show();
-                    });
-                }
-            }
         });
-    } catch (Exception e) {
-        e.printStackTrace();
-        Toast.makeText(this, "Error uploading image", Toast.LENGTH_SHORT).show();
     }
-}
 
-private void updateProfileImage(String imageUrl) {
-    database.getReference().child("Users").child(FirebaseAuth.getInstance().getUid())
-            .child("profilePic").setValue(imageUrl);
-    Picasso.get().load(imageUrl).into(binding.profileImage);
-}
-
-private String parseImageUrl(String responseBody) {
-    // Parse the JSON response to extract the image URL
-    // You can use a library like Gson or JSONObject
-    // For simplicity, let's assume the URL is in the "link" field
-    try {
-        JSONObject json = new JSONObject(responseBody);
-        return json.getJSONObject("data").getString("link");
-    } catch (Exception e) {
-        e.printStackTrace();
-        return null;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == IMAGE_PICK_CODE && resultCode == RESULT_OK && data != null) {
+            selectedImageUri = data.getData();
+            binding.profileImage.setImageURI(selectedImageUri);
+            uploadImageToImgur();
+        }
     }
-}
-    private static File getFileFromUri(Context context, Uri uri) {
-        ContentResolver contentResolver = context.getContentResolver();
-        File tempFile = new File(context.getCacheDir(), "tempImage.jpg");
-        try (InputStream inputStream = contentResolver.openInputStream(uri);
-             OutputStream outputStream = new FileOutputStream(tempFile)) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, length);
+
+    private void uploadImageToImgur() {
+        if (selectedImageUri == null) {
+            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            File imageFile = compressImage(selectedImageUri);
+            if (imageFile == null) {
+                Toast.makeText(this, "Error compressing image", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            OkHttpClient client = new OkHttpClient();
+
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("image", imageFile.getName(),
+                            RequestBody.create(imageFile, MediaType.parse("image/jpeg")))
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url("https://api.imgur.com/3/image")
+                    .addHeader("Authorization", "Client-ID " + IMGUR_CLIENT_ID)
+                    .post(requestBody)
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    runOnUiThread(() -> Toast.makeText(SettingsActivity.this, "Image upload failed", Toast.LENGTH_SHORT).show());
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String responseBody = response.body().string();
+                        String imageUrl = parseImageUrl(responseBody);
+
+                        runOnUiThread(() -> {
+                            Toast.makeText(SettingsActivity.this, "Image uploaded successfully", Toast.LENGTH_SHORT).show();
+                            updateProfileImage(imageUrl);
+                        });
+                    } else {
+                        Log.e("ImgurUpload", "Error: " + response.code() + ", Response: " + response.body().string());
+                        runOnUiThread(() -> Toast.makeText(SettingsActivity.this, "Image upload failed", Toast.LENGTH_SHORT).show());
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error uploading image", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void updateProfileImage(String imageUrl) {
+        database.getReference().child("Users").child(FirebaseAuth.getInstance().getUid())
+                .child("profilePic").setValue(imageUrl);
+        Picasso.get().load(imageUrl).into(binding.profileImage);
+    }
+
+    private File compressImage(Uri imageUri) {
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+            File tempFile = new File(getCacheDir(), "compressedImage.jpg");
+            FileOutputStream outputStream = new FileOutputStream(tempFile);
+
+            // Compress the image
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream);
+
+            outputStream.flush();
+            outputStream.close();
+            return tempFile;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
-        return tempFile;
+    }
+
+    private String parseImageUrl(String responseBody) {
+        try {
+            JSONObject json = new JSONObject(responseBody);
+            return json.getJSONObject("data").getString("link");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

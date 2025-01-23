@@ -22,7 +22,6 @@ public class FileUtils {
         }
         return null;
     }
-
     public static File getFile(Context context, Uri uri) {
         String path = getPath(context, uri);
         if (path != null) {

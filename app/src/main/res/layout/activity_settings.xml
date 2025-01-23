@@ -68,6 +68,7 @@
             tools:ignore="SpUsage,TextSizeCheck" />
 
         <EditText
+            android:id="@+id/etUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -102,6 +103,7 @@
             tools:ignore="ObsoleteLayoutParam,SpUsage,TextSizeCheck" />
 
         <EditText
+            android:id="@+id/etAbout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="45dp"

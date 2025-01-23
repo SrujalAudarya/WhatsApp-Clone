@@ -46,6 +46,8 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -64,5 +66,7 @@ dependencies {
     //emoji keyboard
     implementation(libs.emoji2)
     implementation(libs.emoji2.bundled)
+// alternative for storing image without paying any cost
+    implementation (libs.okhttp)
 
 }

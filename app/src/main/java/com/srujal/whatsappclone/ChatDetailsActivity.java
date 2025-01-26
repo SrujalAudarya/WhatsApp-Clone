@@ -11,11 +11,9 @@ import androidx.emoji2.bundled.BundledEmojiCompatConfig;
 import androidx.emoji2.text.EmojiCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
@@ -23,10 +21,8 @@ import com.srujal.whatsappclone.Adapters.ChatAdapter;
 import com.srujal.whatsappclone.Models.Messages;
 import com.srujal.whatsappclone.databinding.ActivityChatDetailsBinding;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 
 public class ChatDetailsActivity extends AppCompatActivity {
 
@@ -120,7 +116,8 @@ public class ChatDetailsActivity extends AppCompatActivity {
                         messagesArrayList.clear();
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                             Messages messages = dataSnapshot.getValue(Messages.class);
-                                messages.setMessageId(dataSnapshot.getKey());
+                            assert messages != null;
+                            messages.setMessageId(dataSnapshot.getKey());
                                 messagesArrayList.add(messages);
                         }
                         chatAdapter.notifyDataSetChanged(); // Notify adapter after loading data
@@ -138,34 +135,31 @@ public class ChatDetailsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String message = binding.etMessage.getText().toString().trim();
                 if (message.isEmpty()) {
-                    return;  // Do nothing if message is empty
+                    return;
                 }
 
-                final Messages messages = new Messages(senderId, (String) EmojiCompat.get().process(message));
+                final Messages messages = new Messages(senderId, message);
                 messages.setTimeStamp(new Date().getTime());
-                binding.etMessage.setText("");  // Clear input field after sending
+                binding.etMessage.setText("");
 
-                // Add the message to the sender's room
+                // Add the message to sender and receiver rooms
                 database.getReference().child("Chats").child(senderRoom)
                         .push()
                         .setValue(messages)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                // Add the message to the receiver's room as well
-                                database.getReference().child("Chats")
-                                        .child(receiverRoom)
-                                        .push()
-                                        .setValue(messages)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                                // Add message locally without reloading entire history
-                                                messagesArrayList.add(messages);
-                                                chatAdapter.notifyItemInserted(messagesArrayList.size() - 1);
-                                            }
-                                        });
-                            }
+                        .addOnSuccessListener(aVoid -> {
+                            database.getReference().child("Chats").child(receiverRoom)
+                                    .push()
+                                    .setValue(messages)
+                                    .addOnSuccessListener(aVoid1 -> {
+                                        messagesArrayList.add(messages);
+                                        chatAdapter.notifyItemInserted(messagesArrayList.size() - 1);
+
+                                        // Update last message
+                                        database.getReference().child("Users").child(senderId).child("lastMessage")
+                                                .setValue(message);
+                                        database.getReference().child("Users").child(reciverId).child("lastMessage")
+                                                .setValue(message);
+                                    });
                         });
             }
         });

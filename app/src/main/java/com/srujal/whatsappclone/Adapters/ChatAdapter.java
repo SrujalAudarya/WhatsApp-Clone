@@ -87,7 +87,7 @@ public class ChatAdapter extends RecyclerView.Adapter {
                                 dialogInterface.dismiss();
                             }
                         }).show();
-                return false;
+                return true;
             }
         });
 

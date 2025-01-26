@@ -84,6 +84,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+
         // Google Sign-In button click listener
         binding.btnGoogle.setOnClickListener(view -> signIn());
 

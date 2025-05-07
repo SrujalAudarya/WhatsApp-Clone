@@ -20,3 +20,9 @@ A functional clone of WhatsApp built using Firebase for real-time database and a
 - **Backend:** Firebase Realtime Database
 - **Authentication:** Firebase Authentication (Email/Password, Google, Facebook)
 - **Design:** XML layouts following Material Design principles
+
+## Author
+
+[Srujal Audarya](https://github.com/srujalaudarya)
+
+GitHub: srujalaudarya
